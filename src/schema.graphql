@@ -29,7 +29,8 @@ type Mutation {
   # Update multiple availabilities for user
   updateShiftAvailabilities(netid: String, shiftAvailabilities: [shiftAvail!]!): String
   updateShiftAvailability(id: Int, availability: Int): UserAvailability
-  # updateShiftScheduled(shiftId: ID!, user: User!, scheduled: Boolean): User!
+  # Update Scheduled
+  updateShiftScheduled(id: ID!, users: [userNetid!]!): Shift
   # signup(email: String!, password: String!, name: String!): AuthPayload
   # login(email: String!, password: String!): AuthPayload
 }
@@ -37,6 +38,10 @@ type Mutation {
 input shiftAvail {
   shift: ID!
   availability: Int!
+}
+
+input userNetid {
+  netid: String!
 }
 
 # type AuthPayload {

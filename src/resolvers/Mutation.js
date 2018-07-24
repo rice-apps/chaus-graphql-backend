@@ -350,6 +350,31 @@ async function updateShiftAvailabilities(parent, args, context, info) {
   return "meme";
 }
 
+async function updateShiftScheduled(parent, args, context, info) {
+  // Get existing scheduled users
+  const currentShift = await context.db.query.shift({
+    where: { id: args.id }
+  }, `{ scheduled { netid } }`);
+  // Remove netids not in input
+  var usersToRemove = currentShift.scheduled.filter((user) => {
+    var { netid } = user;
+    // If netid not in updated scheduled list, user will be removed
+    var filteredUsers = args.users.filter((user) => {
+      // Check if netid currently scheduled is equal to that of user in input
+      return netid == user.netid;
+    });
+    // If length == 0, then user not in input, and will be removed
+    return filteredUsers.length == 0;
+  });
+  return context.db.mutation.updateShift({
+    data: { scheduled: {
+      disconnect: usersToRemove,
+      connect: args.users
+    } },
+    where: { id: args.id }
+  }, `{ id }`);
+}
+
 function updateShiftAvailability(parent, args, context, info) {
   return context.db.mutation.updateUserAvailability({
     data: { availability: args.availability },
@@ -464,5 +489,6 @@ module.exports = {
   createSchedule,
   deleteSchedule,
   updateShiftAvailabilities,
-  updateShiftAvailability
+  updateShiftAvailability,
+  updateShiftScheduled
 }
