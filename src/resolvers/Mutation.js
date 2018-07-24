@@ -258,12 +258,24 @@ async function createSchedule(parent, args, context, info) {
     }, `{ id }`));
   }
   // Wait for all days to be updated with new shifts
-  dayUpdates = await Promise.all(dayUpdates)
-  console.log(dayUpdates);
+  dayUpdates = await Promise.all(dayUpdates);
+  // Create UsersScheduled Objects
+  var userSchedules = [];
+  users.map(async (user) => {
+    var userSchedule = context.db.mutation.createUserSchedule({
+      data: {
+        user: { connect: { id: user.id } },
+        scheduledShifts: []
+      }
+    }, `{ id }`);
+    userSchedules.push(userSchedule);
+  });
+  userSchedules = await Promise.all(userSchedules);
   // Add days to week
   return context.db.mutation.updateSchedule({
     data: {
-      week: { connect: dayUpdates }
+      week: { connect: dayUpdates },
+      userSchedules: { connect: userSchedules }
     },
     where: { id: schedule.id }
   }, info);
