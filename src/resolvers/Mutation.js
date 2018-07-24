@@ -261,13 +261,16 @@ async function createSchedule(parent, args, context, info) {
   dayUpdates = await Promise.all(dayUpdates);
   // Create UsersScheduled Objects
   var userSchedules = [];
+  // Map through each user in parallel
   users.map(async (user) => {
     var userSchedule = context.db.mutation.createUserSchedule({
       data: {
+        // Create relation to user object by id
         user: { connect: { id: user.id } },
         scheduledShifts: []
       }
     }, `{ id }`);
+    // Currently a promise
     userSchedules.push(userSchedule);
   });
   userSchedules = await Promise.all(userSchedules);
