@@ -13,6 +13,7 @@ type User {
 
 type Schedule {
   id: ID! @unique
+  userSchedules: [UserSchedule!]! @relation(name: "UsersOfSchedule", onDelete: CASCADE)
   weekNo: Int!
   week: [Day!]! @relation(name: "DaysOfSchedule", onDelete: CASCADE)
 }
@@ -39,4 +40,10 @@ type UserAvailability {
   shift: Shift! @relation(name: "AvailabilitiesOfShift")
   user: User! @relation(name: "UserAvailabilities")
   availability: Int
+}
+
+type UserSchedule {
+  id: ID! @unique
+  user: User! @relation(name: "UserSchedule")
+  scheduledShifts: [Shift!]! @relation(name: "UserScheduledShifts")
 }

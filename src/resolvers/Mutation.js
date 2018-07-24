@@ -20,6 +20,16 @@ async function createUser(parent, args, context, info) {
   }, `{ id week { id shifts { id } } }`);
   // Iterate thru each schedule
   for (var currentSchedule of schedules) {
+    // Add user to userSchedule property for every schedule
+    requests.push(context.db.mutation.updateSchedule({
+      data: {
+        userSchedules: { create: {
+          user: { connect: { id: User.id } },
+          scheduledShifts: []
+        }}
+      },
+      where: { id: currentSchedule.id }
+    }));
     // Iterate thru each day of schedule
     for (var day of currentSchedule.week) {
       // Iterate thru each shift of day
@@ -258,12 +268,27 @@ async function createSchedule(parent, args, context, info) {
     }, `{ id }`));
   }
   // Wait for all days to be updated with new shifts
-  dayUpdates = await Promise.all(dayUpdates)
-  console.log(dayUpdates);
+  dayUpdates = await Promise.all(dayUpdates);
+  // Create UsersScheduled Objects
+  var userSchedules = [];
+  // Map through each user in parallel
+  users.map(async (user) => {
+    var userSchedule = context.db.mutation.createUserSchedule({
+      data: {
+        // Create relation to user object by id
+        user: { connect: { id: user.id } },
+        scheduledShifts: []
+      }
+    }, `{ id }`);
+    // Currently a promise
+    userSchedules.push(userSchedule);
+  });
+  userSchedules = await Promise.all(userSchedules);
   // Add days to week
   return context.db.mutation.updateSchedule({
     data: {
-      week: { connect: dayUpdates }
+      week: { connect: dayUpdates },
+      userSchedules: { connect: userSchedules }
     },
     where: { id: schedule.id }
   }, info);
@@ -286,6 +311,16 @@ async function addUserToSchedules(parent, args, context, info) {
   let requests = [];
   // Iterate thru each schedule
   for (var currentSchedule of schedules) {
+    // Add user to userSchedule property for every schedule
+    requests.push(context.db.mutation.updateSchedule({
+      data: {
+        userSchedules: { create: {
+          user: { connect: { id: User.id } },
+          scheduledShifts: []
+        }}
+      },
+      where: { id: currentSchedule.id }
+    }));
     // Iterate thru each day of schedule
     for (var day of currentSchedule.week) {
       // Map thru each shift asynchronously
@@ -365,6 +400,41 @@ async function updateShiftScheduled(parent, args, context, info) {
     });
     // If length == 0, then user not in input, and will be removed
     return filteredUsers.length == 0;
+  });
+  // Remove shifts from usersToRemove scheduled property
+  usersToRemove.map(async (user) => {
+    // First get associated UserSchedule object id
+    var userScheduleObj = await context.db.query.userSchedules({
+      where: { user: { netid: user.netid } },
+      first: 1
+    }, `{ id }`);
+    // We receive an array, so we need to pluck the first value
+    userScheduleId = userScheduleObj[0].id;
+    context.db.mutation.updateUserSchedule({
+      data: {
+        // Disconnect unscheduled shift from user
+        scheduledShifts: { disconnect: { id: args.id } }
+      },
+      // Find UserSchedule object by user
+      where: { id: userScheduleId }
+    });
+  });
+  // Add shifts to users not being removed
+  args.users.map(async (user) => {
+    var userScheduleObj = await context.db.query.userSchedules({
+      where: { user: { netid: user.netid } },
+      first: 1
+    }, `{ id }`);
+    // We receive an array, so we need to pluck the first value's id
+    userScheduleId = userScheduleObj[0].id;
+    context.db.mutation.updateUserSchedule({
+      data: {
+        // Connect newly scheduled shift for user
+        scheduledShifts: { connect: { id: args.id } }
+      },
+      // Find UserSchedule object by user
+      where: { id: userScheduleId }
+    });
   });
   return context.db.mutation.updateShift({
     data: { scheduled: {
