@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/will-mundy-9280b5/chaus-gql/dev
-# timestamp: Tue Jul 24 2018 10:59:45 GMT-0400 (EDT)
+# timestamp: Tue Jul 24 2018 11:47:03 GMT-0400 (EDT)
 
 type AggregateDay {
   count: Int!
