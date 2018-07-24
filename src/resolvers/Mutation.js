@@ -381,6 +381,41 @@ async function updateShiftScheduled(parent, args, context, info) {
     // If length == 0, then user not in input, and will be removed
     return filteredUsers.length == 0;
   });
+  // Remove shifts from usersToRemove scheduled property
+  usersToRemove.map(async (user) => {
+    // First get associated UserSchedule object id
+    var userScheduleObj = await context.db.query.userSchedules({
+      where: { user: { netid: user.netid } },
+      first: 1
+    }, `{ id }`);
+    // We receive an array, so we need to pluck the first value
+    userScheduleId = userScheduleObj[0].id;
+    context.db.mutation.updateUserSchedule({
+      data: {
+        // Disconnect unscheduled shift from user
+        scheduledShifts: { disconnect: { id: args.id } }
+      },
+      // Find UserSchedule object by user
+      where: { id: userScheduleId }
+    });
+  });
+  // Add shifts to users not being removed
+  args.users.map(async (user) => {
+    var userScheduleObj = await context.db.query.userSchedules({
+      where: { user: { netid: user.netid } },
+      first: 1
+    }, `{ id }`);
+    // We receive an array, so we need to pluck the first value's id
+    userScheduleId = userScheduleObj[0].id;
+    context.db.mutation.updateUserSchedule({
+      data: {
+        // Connect newly scheduled shift for user
+        scheduledShifts: { connect: { id: args.id } }
+      },
+      // Find UserSchedule object by user
+      where: { id: userScheduleId }
+    });
+  });
   return context.db.mutation.updateShift({
     data: { scheduled: {
       disconnect: usersToRemove,
