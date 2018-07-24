@@ -1,39 +1,50 @@
-# import Link, LinkSubscriptionPayload, Vote, VoteSubscriptionPayload, LinkOrderByInput from "./generated/prisma.graphql"
+# import User from "./generated/prisma.graphql"
+# import WEEKDAY, ROLE from "../database/datamodel/enums.graphql"
 
 type Query {
-  info: String!
-  feed(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): Feed!
+  # Fetch all users or filter by first name, last name, or netid
+  users(filter: String): [User!]
+  # Schedule queries
+  schedules(filter: Int): [Schedule!]
+  # Testing
+  shift(filter: String): [Shift!]
+  availabilities(filter: String): [UserAvailability!]
 }
 
 type Mutation {
-  # Link mutations
-  post(url: String!, description: String!): Link!
   # User mutations
-  signup(email: String!, password: String!, name: String!): AuthPayload
-  login(email: String!, password: String!): AuthPayload
-  # For Voting
-  vote(linkId: ID!): Vote
+  createUser(netid: String!, firstName: String, lastName: String,
+              idealHour: Int, maxHour: Int, totalHours: Int, role: ROLE): User!
+  updateUser(netid: String!, firstName: String, lastName: String,
+              idealHour: Int, maxHour: Int, totalHours: Int, role: ROLE): User
+  deleteUser(netid: String!): User!
+  # Login Process thru CAS
+  login(ticket: String!): User
+  # Build Schedule
+  createSchedule(weekNo: Int!): Schedule
+  # Add Existing User to Schedules
+  addUserToSchedules(netid: String!): User
+  # Delete Schedule
+  deleteSchedule(id: ID!): Schedule
+  # Update multiple availabilities for user
+  updateShiftAvailabilities(netid: String, shiftAvailabilities: [shiftAvail!]!): String
+  updateShiftAvailability(id: Int, availability: Int): UserAvailability
+  # Update Scheduled
+  updateShiftScheduled(id: ID!, users: [userNetid!]!): Shift
+  # signup(email: String!, password: String!, name: String!): AuthPayload
+  # login(email: String!, password: String!): AuthPayload
 }
 
-type Feed {
-  links: [Link!]!
-  count: Int!
+input shiftAvail {
+  shift: ID!
+  availability: Int!
 }
 
-type AuthPayload {
-  token: String
-  user: User
+input userNetid {
+  netid: String!
 }
 
-# Why redefine? To hide password from outside observers
-type User {
-  id: ID!
-  name: String!
-  email: String!
-  links: [Link!]!
-}
-
-type Subscription {
-  newLink: LinkSubscriptionPayload
-  newVote: VoteSubscriptionPayload
-}
+# type AuthPayload {
+#   token: String
+#   user: User
+# }

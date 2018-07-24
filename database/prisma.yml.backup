@@ -2,10 +2,10 @@
 # to the database which plays nice with GraphQL
 
 # The service name, this will be part of the endpoint of the Prisma API
-#service: chaus-graphql
+service: chaus-graphql
 
 # The deployment stage, this will also be part of the API endpoint
-#stage: dev
+stage: dev
 
 # Points to the file that holds your data model
 datamodel:
@@ -15,24 +15,12 @@ datamodel:
 # You can only access the API when providing JWTs that are signed with this secret
 secret: itsCHAUSbiatches
 
-#cluster: public-flameloon-112/prisma-us1
+# cluster: public-flameloon-112/prisma-us1
 
 # Real cluster US
-# cluster: public-ironfinger-896/prisma-us1
+cluster: public-ironfinger-896/prisma-us1
 
 # EU Cluster
 # cluster: public-nimbletail-691/prisma-eu1
 
 # cluster: local
-
-# endpoint: https://us1.prisma.sh/public-ironfinger-896/chaus-graphql/dev
-# endpoint: https://us1.prisma.sh/will-mundy-9280b5/chaus-gql/dev
-
-# endpoint: https://us1.prisma.sh/public-flameloon-112/chaus-graphql/dev
-
-endpoint: https://us1.prisma.sh/will-mundy-9280b5/chaus-gql/dev
-
-# Fix Generated File
-hooks:
-  post-deploy:
-    - graphql get-schema -p database

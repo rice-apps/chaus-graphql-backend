@@ -1,0 +1,42 @@
+type User {
+  id: ID! @unique
+  netid: String! @unique
+  firstName: String
+  lastName: String
+  idealHour: Int
+  maxHour: Int
+  totalHours: Int
+  role: ROLE! @default(value: "Employee")
+  availabilities: [UserAvailability!]! @relation(name: "UserAvailabilities", onDelete: CASCADE)
+  scheduled: [Shift!]! @relation(name: "UsersScheduled")
+}
+
+type Schedule {
+  id: ID! @unique
+  weekNo: Int!
+  week: [Day!]! @relation(name: "DaysOfSchedule", onDelete: CASCADE)
+}
+
+type Day {
+  id: ID! @unique
+  dayName: WEEKDAY!
+  shifts: [Shift!]! @relation(name: "ShiftsOfDay", onDelete: CASCADE)
+}
+
+type Shift {
+  id: ID! @unique
+  startTime: Int!
+  endTime: Int!
+  closed: Boolean!
+  day: Day! @relation(name: "DayofShift")
+  availabilities: [UserAvailability!]! @relation(name: "AvailabilitiesOfShift", onDelete: CASCADE)
+  scheduled: [User!]! @relation(name: "UsersScheduled")
+}
+
+type UserAvailability {
+  # netid: String! @unique
+  id: ID! @unique
+  shift: Shift! @relation(name: "AvailabilitiesOfShift")
+  user: User! @relation(name: "UserAvailabilities")
+  availability: Int
+}
