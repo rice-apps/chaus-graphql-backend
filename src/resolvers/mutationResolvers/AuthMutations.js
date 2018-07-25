@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 var rp = require('request-promise');
 var xmlParser = require('xml2js').parseString;
 var stripPrefix = require('xml2js').processors.stripPrefix;
-var config = require('../config');
+var config = require('../../config');
 
 async function initialAuthentication(root, args, context, info) {
   // First authenticate ticket using IDP API
@@ -32,8 +32,7 @@ async function initialAuthentication(root, args, context, info) {
     }, `{ id netid firstName lastName role }`);
     // Create JWT Token
     var token = jwt.sign({
-      data: user.netid,
-      id: user.id
+      user: user
     }, config.secret, { expiresIn: "30d" });
     // Bundle final response
     var authPayload = {

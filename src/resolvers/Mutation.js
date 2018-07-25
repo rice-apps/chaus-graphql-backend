@@ -5,7 +5,7 @@ var xmlParser = require('xml2js').parseString;
 var config = require('../config');
 const { APP_SECRET, DAYS_OF_WEEK, getUserId } = require('../utils')
 // Side resolvers
-const { initialAuthentication } = require('./Authentication');
+const { initialAuthentication } = require('./mutationResolvers/AuthMutations');
 
 // User Mutations
 async function createUser(parent, args, context, info) {

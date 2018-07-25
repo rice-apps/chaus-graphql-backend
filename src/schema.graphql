@@ -6,6 +6,8 @@ type Query {
   users(filter: String): [User!]
   # Schedule queries
   schedules(filter: Int): [Schedule!]
+  # Auth queries
+  authenticateUser(token: String): User
   # Testing
   shift(filter: String): [Shift!]
   availabilities(filter: String): [UserAvailability!]
