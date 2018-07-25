@@ -1,3 +1,5 @@
+const { authenticateUser } = require('./queryResolvers/AuthQueries');
+
 async function users(parent, args, context, info) {
   const where = args.filter
     ? {
@@ -83,5 +85,6 @@ module.exports = {
   users,
   schedules,
   shift,
-  availabilities
+  availabilities,
+  authenticateUser
 }
