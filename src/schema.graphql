@@ -19,7 +19,7 @@ type Mutation {
               idealHour: Int, maxHour: Int, totalHours: Int, role: ROLE): User
   deleteUser(netid: String!): User!
   # Login Process thru CAS
-  login(ticket: String!): User
+  initialAuthentication(ticket: String!): AuthPayload
   # Build Schedule
   createSchedule(weekNo: Int!): Schedule
   # Add Existing User to Schedules
@@ -44,7 +44,7 @@ input userNetid {
   netid: String!
 }
 
-# type AuthPayload {
-#   token: String
-#   user: User
-# }
+type AuthPayload {
+  user: User
+  token: String
+}

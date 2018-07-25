@@ -4,6 +4,8 @@ var request = require('request');
 var xmlParser = require('xml2js').parseString;
 var config = require('../config');
 const { APP_SECRET, DAYS_OF_WEEK, getUserId } = require('../utils')
+// Side resolvers
+const { initialAuthentication } = require('./Authentication');
 
 // User Mutations
 async function createUser(parent, args, context, info) {
@@ -560,5 +562,6 @@ module.exports = {
   deleteSchedule,
   updateShiftAvailabilities,
   updateShiftAvailability,
-  updateShiftScheduled
+  updateShiftScheduled,
+  initialAuthentication
 }
