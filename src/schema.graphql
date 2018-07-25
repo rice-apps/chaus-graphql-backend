@@ -20,7 +20,6 @@ type Mutation {
   deleteUser(netid: String!): User!
   # Login Process thru CAS
   initialAuthentication(ticket: String!): AuthPayload
-  login(ticket: String!): User
   # Build Schedule
   createSchedule(weekNo: Int!): Schedule
   # Add Existing User to Schedules
