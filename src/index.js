@@ -6,7 +6,6 @@ const { Prisma } = require('prisma-binding')
 // Resolvers: Allow us to interact with our DB in specified ways
 const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
-const AuthQuery = require('./resolvers/AuthQuery')
 // const Subscription = require('./resolvers/Subscription')
 // const Feed = require('./resolvers/Feed')
 // Create resolver object
