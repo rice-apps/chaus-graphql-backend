@@ -13,6 +13,7 @@
     "jsonwebtoken": "^8.2.1",
     "nodemon": "^1.17.5",
     "prisma-binding": "^2.1.0",
-    "request": "^2.85.0"
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2"
   }
 }
