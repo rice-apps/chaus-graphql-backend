@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var rp = require('request-promise');
 var xmlParser = require('xml2js').parseString;
