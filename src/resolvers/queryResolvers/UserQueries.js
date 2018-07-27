@@ -21,6 +21,14 @@ async function users(parent, args, context, info) {
     )
 }
 
+function user(parent, args, context, info) {
+    return context.db.query.user(
+      {where: { netid: args.netid } },
+      info
+    );
+}
+
 module.exports = {
-    users
+    users,
+    user
 }

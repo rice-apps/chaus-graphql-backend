@@ -4,6 +4,7 @@
 type Query {
   # Fetch all users or filter by first name, last name, or netid
   users(filter: String): [User!]
+  user(netid: String): User!
   # Schedule queries
   schedules(filter: Int): [Schedule!]
   # Auth queries
