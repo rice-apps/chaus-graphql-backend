@@ -71,6 +71,10 @@ async function updateUser(parent, args, context, info) {
 }
   
 async function deleteUser(parent, args, context, info) {
+    // First need to delete UserSchedules object
+    await context.db.mutation.deleteManyUserSchedules({
+        where: { user: { netid: args.netid } }
+    });
     // Prisma has cascading delete system, so we just delete user & prisma handles
     // deletion of connected user availabilities
     return context.db.mutation.deleteUser({
