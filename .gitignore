@@ -1,3 +1,4 @@
 node_modules/
 database/prisma.yml
 .graphqlconfig.yml
+src/config.js
