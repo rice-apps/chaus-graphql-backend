@@ -2,6 +2,7 @@
 const { GraphQLServer } = require('graphql-yoga')
 // This is how we can use Prisma for context
 const { Prisma } = require('prisma-binding')
+const config = require('./config');
 
 // Resolvers: Allow us to interact with our DB in specified ways
 const Query = require('./resolvers/Query')
@@ -27,11 +28,11 @@ const server = new GraphQLServer({
       // This is generated from our .graphqlconfig.yml file
       typeDefs: 'src/generated/prisma.graphql',
       // Endpoint of our Prisma DB
-      endpoint: 'https://us1.prisma.sh/will-mundy-9280b5/chaus-gql/dev',
+      endpoint: config.endpoint,
       // Local Endpoint
       // endpoint: 'http://localhost:4466/chaus-graphql/dev',
       // Since we are interacting with our Prisma Backend, we need its secret to access
-      secret: 'itsCHAUSbiatches',
+      secret: config.secret,
       debug: true,
     }),
   }),
